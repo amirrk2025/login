@@ -31,8 +31,8 @@
 </div>
 
 <script>
-    // لینک Apps Script Web App رو جایگزین کن
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1jcBDDNW-sm6oIp7shy-pGCjyT1y_WJNUaF3dKf6P5uH1m3mD_wJmhIFtPjdLzxQO/exec'; // مثلاً https://script.google.com/macros/s/AKfycbz.../exec
+    // لینک Apps Script Web App رو جایگزین کن (جدید از deploy)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvKM3N10Wok7cxKjviAufvDPTkKW4Q4qyENeHX1UN5afybqQY6YaDykZUcN63jbuM7/exec';
 
     const loginForm = document.getElementById('loginForm');
     const message = document.getElementById('message');
@@ -41,10 +41,12 @@
     async function addToSheet(number) {
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ number: number })
         });
         if (!response.ok) throw new Error('خطا در ذخیره: ' + response.status);
+        const result = await response.json();
+        if (result.status === 'error') throw new Error(result.message);
         return true;
     }
 
