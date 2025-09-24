@@ -144,7 +144,7 @@
     const SMS_PATTERN_CODE = 'kvndfu4hb67n1ix';
     const SMS_SENDER = '+983000505';
     const SMS_URL = 'https://api2.ippanel.com/api/v1/sms/pattern/normal/send';
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwySaRgcg4CJrk2rMbFfqGa_fDAE51E6WKDZIrD5yu5-83wkjVd4G4YvAW3cBKb1qvH/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNGzaJAxIkE_DrZKd8vllj0N-drF7dquGOhvPWFi0sl-UQvbfGCHxLWLW-V-di4t-Y/exec';
     let currentData = {}; // {name, phone, code, timestamp}
     // تابع ارسال SMS
     async function sendSMS(phone, variables, message = 'کد تایید') {
@@ -197,13 +197,16 @@
         }
         try {
             // ذخیره در Sheets
+            console.log('ارسال به Sheets:', { name: currentData.name, number: currentData.phone }); // دیباگ
             const sheetResponse = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/plain;charset=utf-8'
                 },
-                body: JSON.stringify({ name: currentData.name, number: currentData.phone })
+                body: JSON.stringify({ name: currentData.name, number: currentData.phone }),
+                redirect: 'follow'
             });
+            console.log('پاسخ Sheets:', sheetResponse.status, await sheetResponse.text()); // دیباگ
             if (!sheetResponse.ok) throw new Error('خطا در ذخیره اطلاعات');
             // SMS موفقیت
             await sendSMS(currentData.phone, { verification_code: 'تبریک! با موفقیت ثبت شدید.' }, 'پیام تبریک');
@@ -211,6 +214,7 @@
             showCongrats(currentData.name);
             currentData = {};
         } catch (error) {
+            console.error('خطا در ذخیره:', error); // دیباگ
             showMessage('خطا: ' + error.message, 'error');
         }
     });
@@ -251,7 +255,9 @@
     // لود لیست (console.log برای دیباگ)
     async function loadCustomers() {
         try {
+            console.log('درخواست GET به Sheets...'); // دیباگ
             const response = await fetch(APPS_SCRIPT_URL);
+            console.log('پاسخ GET:', response.status); // دیباگ
             if (!response.ok) throw new Error('خطا در لود');
             const data = await response.json();
             console.log('مشتریان:', data.slice(1));
