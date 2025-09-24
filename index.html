@@ -46,44 +46,28 @@
         <button id="resendCode">ارسال مجدد کد</button>
     </div>
 
-    <!-- قدم ۳: لیست -->
-    <div id="step3" class="step">
-        <h2>با موفقیت ثبت شدید!</h2>
-        <h2>لیست مشتریان ذخیره‌شده:</h2>
-        <ul id="customerList"></ul>
-    </div>
-
+    <!-- قدم ۳: موفقیت موقت (حالا حذف شد، مستقیم به قدم ۱ برمی‌گرده) -->
     <div id="message"></div>
 </div>
 
 <script>
-    // تنظیمات SMS (API key رو امن نگه دار - در production از Vercel env استفاده کن، اما در JS عمومی می‌شه)
-    const SMS_API_KEY = 'OWZmMGNmMmQtYzc4Zi00NDRhLWFmNWEtYTY4Zjk3ZjZlNmM5MGNhY2M4OTQwNmRmNjA1MWEwY2NjYzNhMDhlNzIwNGQ='; // هشدار: این عمومیه، regenerate کن!
+    // تنظیمات SMS (API key رو regenerate کن و امن نگه دار)
+    const SMS_API_KEY = 'OWZmMGNmMmQtYzc4Zi00NDRhLWFmNWEtYTY4Zjk3ZjZlNmM5MGNhY2M4OTQwNmRmNjA1MWEwY2NjYzNhMDhlNzIwNGQ=';
     const SMS_PATTERN_CODE = 'kvndfu4hb67n1ix';
     const SMS_SENDER = '+983000505';
     const SMS_URL = 'https://api2.ippanel.com/api/v1/sms/pattern/normal/send';
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvKM3N10Wok7cxKjviAufvDPTkKW4Q4qyENeHX1UN5afybqQY6YaDykZUcN63jbuM7/exec';
 
-    let currentData = {}; // ذخیره موقت: {name, phone, code, timestamp}
+    let currentData = {}; // {name, phone, code, timestamp}
 
-    // قدم ۱: ارسال SMS
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('customerName').value;
-        const phone = document.getElementById('customerNumber').value;
-        if (!name || !phone) return showMessage('نام و شماره رو وارد کن!', 'error');
-
-        // تولید کد
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        currentData = { name, phone, code, timestamp: Date.now() };
-
-        // payload SMS
+    // تابع ارسال SMS عمومی
+    async function sendSMS(phone, variables, message = 'کد تایید') {
         const payload = {
             code: SMS_PATTERN_CODE,
             sender: SMS_SENDER,
             recipient: phone,
-            variable: { verification_code: code }
+            variable: variables
         };
 
         try {
@@ -94,42 +78,62 @@
             });
 
             if (response.status !== 200) {
-                throw new Error('خطا در ارسال SMS: ' + response.status);
+                throw new Error(message + ' ارسال نشد: ' + response.status);
             }
+            return true;
+        } catch (error) {
+            throw new Error(message + ' خطا: ' + error.message);
+        }
+    }
 
+    // قدم ۱: ارسال کد تایید
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerNumber').value.trim();
+        if (!name || !phone) return showMessage('نام و شماره رو وارد کن!', 'error');
+
+        // تولید کد
+        const code = Math.floor(1000 + Math.random() * 9000).toString();
+        currentData = { name, phone, code, timestamp: Date.now() };
+
+        try {
+            await sendSMS(phone, { verification_code: code }, 'کد تایید');
             showMessage('کد به شماره شما ارسال شد!', 'success');
             document.getElementById('phoneDisplay').textContent = phone;
             switchStep('step1', 'step2');
+            document.getElementById('verifyCode').focus();
         } catch (error) {
-            showMessage('خطا: ' + error.message, 'error');
+            showMessage(error.message, 'error');
         }
     });
 
     // قدم ۲: تایید کد
     document.getElementById('verifyForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const code = document.getElementById('verifyCode').value;
+        const code = document.getElementById('verifyCode').value.trim();
         if (!code) return;
 
-        // چک کد (محلی)
-        if (currentData.code !== code || (Date.now() - currentData.timestamp > 300000)) { // ۵ دقیقه expire
+        // چک کد
+        if (currentData.code !== code || (Date.now() - currentData.timestamp > 300000)) { // ۵ دقیقه
             showMessage('کد نامعتبر یا منقضی شده!', 'error');
             return;
         }
 
-        // ذخیره در Sheets
         try {
-            const response = await fetch(APPS_SCRIPT_URL, {
+            // ذخیره در Sheets (اسم و شماره هر دو)
+            const sheetResponse = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ name: currentData.name, number: currentData.phone })
             });
-            if (!response.ok) throw new Error('خطا در ذخیره');
+            if (!sheetResponse.ok) throw new Error('خطا در ذخیره اطلاعات');
 
-            showMessage('شماره تایید شد و ذخیره شد!', 'success');
-            switchStep('step2', 'step3');
-            loadCustomers();
-            currentData = {}; // پاک کردن
+            // ارسال SMS موفقیت
+            await sendSMS(currentData.phone, { verification_code: 'با موفقیت!' }, 'پیام موفقیت');
+
+            showMessage('شماره تایید شد و ذخیره شد! پیام موفقیت ارسال شد.', 'success');
+            resetForm(); // برگشت به قدم ۱
         } catch (error) {
             showMessage('خطا: ' + error.message, 'error');
         }
@@ -137,8 +141,22 @@
 
     // ارسال مجدد
     document.getElementById('resendCode').addEventListener('click', () => {
-        document.getElementById('registerForm').dispatchEvent(new Event('submit'));
+        const name = document.getElementById('customerName').value.trim();
+        if (name) {
+            document.getElementById('registerForm').dispatchEvent(new Event('submit'));
+        } else {
+            switchStep('step2', 'step1');
+        }
     });
+
+    // ریست فرم به قدم ۱
+    function resetForm() {
+        document.getElementById('registerForm').reset();
+        document.getElementById('verifyForm').reset();
+        currentData = {};
+        switchStep('step2', 'step1');
+        loadCustomers(); // آپدیت لیست
+    }
 
     function switchStep(hide, show) {
         document.getElementById(hide).classList.remove('active');
@@ -149,23 +167,19 @@
         const msg = document.getElementById('message');
         msg.textContent = text;
         msg.className = type;
+        setTimeout(() => { msg.textContent = ''; msg.className = ''; }, 5000); // پاک کردن بعد ۵ ثانیه
     }
 
-    // لود لیست (عین قبل)
+    // لود لیست (عین قبل، بدون قدم ۳)
     async function loadCustomers() {
         try {
             const response = await fetch(APPS_SCRIPT_URL);
             if (!response.ok) throw new Error('خطا در لود');
             const data = await response.json();
-            const customerList = document.getElementById('customerList');
-            customerList.innerHTML = '';
-            data.slice(1).forEach(row => {
-                const li = document.createElement('li');
-                li.textContent = `نام: ${row[1] || ''} | شماره: ${row[2] || ''}`;
-                customerList.appendChild(li);
-            });
+            // اگر می‌خوای لیست رو نشون بدی، یک div اضافه کن؛ فعلاً console.log
+            console.log('مشتریان:', data.slice(1));
         } catch (error) {
-            showMessage('خطا در لود لیست: ' + error.message, 'error');
+            console.error('خطا در لود لیست:', error);
         }
     }
 
