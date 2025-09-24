@@ -5,139 +5,405 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لاگین مشتریان با SMS</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; }
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --success: #28a745;
+            --success-light: #20c997;
+            --info: #007bff;
+            --info-dark: #0056b3;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --gray-light: #e1e5e9;
+            --border-radius: 16px;
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * { 
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Vazirmatn', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             margin: 0;
             padding: 20px;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1.6;
+            color: var(--dark);
         }
+        
         .container {
-            max-width: 420px;
+            max-width: 450px;
             width: 100%;
             background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px 35px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             animation: slideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        @keyframes slideIn { 
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.98); 
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            } 
+        }
+        
         h1 {
             text-align: center;
-            color: #333;
+            color: var(--dark);
             margin-bottom: 30px;
-            font-weight: 500;
-            font-size: 24px;
+            font-weight: 700;
+            font-size: 26px;
+            position: relative;
+            padding-bottom: 15px;
         }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
         input {
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid var(--gray-light);
+            border-radius: var(--border-radius);
             font-size: 16px;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: var(--transition);
+            background-color: #fafbfc;
         }
+        
         input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            background-color: white;
         }
+        
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 18px;
+        }
+        
         button {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #28a745, #20c997);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--success), var(--success-light));
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            margin: 10px 0;
+            margin: 15px 0 10px;
             font-size: 16px;
-            font-weight: 500;
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--success-light), var(--success));
+            transition: var(--transition);
+            z-index: -1;
+        }
+        
+        button:hover::before {
+            width: 100%;
+        }
+        
         button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(40, 167, 69, 0.25);
         }
-        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        button:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            transform: none; 
+        }
+        
+        button:disabled::before {
+            display: none;
+        }
+        
         #resendCode {
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, var(--info), var(--info-dark));
             font-size: 14px;
-            padding: 12px;
+            padding: 14px;
+            margin-top: 5px;
         }
-        #resendCode:hover { box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); }
+        
+        #resendCode::before {
+            background: linear-gradient(135deg, var(--info-dark), var(--info));
+        }
+        
+        #resendCode:hover { 
+            box-shadow: 0 12px 20px rgba(0, 123, 255, 0.25); 
+        }
+        
         #message {
-            margin: 15px 0;
-            padding: 12px;
-            border-radius: 12px;
+            margin: 20px 0;
+            padding: 14px;
+            border-radius: var(--border-radius);
             text-align: center;
             font-weight: 500;
             animation: fadeIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        @keyframes fadeIn { 
+            from { 
+                opacity: 0; 
+                transform: translateY(-10px);
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            } 
+        }
+        
         .success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            background: linear-gradient(135deg, #e8f7ee, #d4f3e3);
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+        
         .error {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            background: linear-gradient(135deg, #fde8e8, #f9d6d6);
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        .step { display: none; }
-        .step.active { display: block; animation: slideIn 0.3s ease-out; }
-        p { text-align: center; color: #666; margin: 10px 0; font-size: 14px; }
-        #phoneDisplay { font-weight: bold; color: #007bff; }
+        
+        .step { 
+            display: none; 
+        }
+        
+        .step.active { 
+            display: block; 
+            animation: slideIn 0.4s ease-out; 
+        }
+        
+        p { 
+            text-align: center; 
+            color: var(--gray); 
+            margin: 15px 0; 
+            font-size: 15px; 
+            line-height: 1.7;
+        }
+        
+        #phoneDisplay { 
+            font-weight: bold; 
+            color: var(--info); 
+            direction: ltr;
+            display: inline-block;
+        }
+        
         .congrats {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, var(--success), var(--success-light));
             color: white;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
             text-align: center;
             box-shadow: 0 20px 40px rgba(40, 167, 69, 0.3);
             z-index: 1000;
-            animation: bounceIn 0.5s ease-out;
-            max-width: 300px;
+            animation: bounceIn 0.6s ease-out;
+            max-width: 320px;
+            width: 90%;
         }
-        @keyframes bounceIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 100% { transform: translate(-50%, -50%) scale(1); } }
-        .congrats h2 { margin: 0 0 10px; font-size: 20px; }
-        .congrats p { margin: 0; font-size: 14px; }
+        
+        @keyframes bounceIn { 
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.3); 
+            } 
+            50% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.05); 
+            } 
+            100% { 
+                transform: translate(-50%, -50%) scale(1); 
+            } 
+        }
+        
+        .congrats h2 { 
+            margin: 0 0 15px; 
+            font-size: 24px; 
+            font-weight: 700;
+        }
+        
+        .congrats p { 
+            margin: 0; 
+            font-size: 16px; 
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .congrats i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--gray-light);
+            margin: 0 6px;
+            transition: var(--transition);
+        }
+        
+        .step-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+        
+        .step-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        
+        .timer {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .timer span {
+            font-weight: 600;
+            color: var(--info);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 25px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            input {
+                padding: 14px 20px 14px 45px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>ورود مشتری</h1>
+    
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step-dot active" id="step1Dot"></div>
+        <div class="step-dot" id="step2Dot"></div>
+    </div>
    
-    <!-- قدم ۱: وارد کردن اسم و شماره -->
+    <!-- Step 1: Enter name and phone -->
     <div id="step1" class="step active">
+        <div class="step-title">اطلاعات مشتری</div>
         <form id="registerForm">
-            <input type="text" id="customerName" placeholder="نام مشتری" required>
-            <input type="tel" id="customerNumber" placeholder="شماره مشتری (مثل ۰۹۱۲۳۴۵۶۷۸۹)" required>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="customerName" placeholder="نام مشتری" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-phone input-icon"></i>
+                <input type="tel" id="customerNumber" placeholder="شماره مشتری (مثل ۰۹۱۲۳۴۵۶۷۸۹)" required>
+            </div>
             <button type="submit">ارسال کد تایید</button>
         </form>
     </div>
-    <!-- قدم ۲: وارد کردن کد -->
+    
+    <!-- Step 2: Enter verification code -->
     <div id="step2" class="step">
+        <div class="step-title">تایید شماره</div>
         <p>کد تایید به شماره <span id="phoneDisplay"></span> ارسال شد.</p>
         <form id="verifyForm">
-            <input type="text" id="verifyCode" placeholder="کد ۴ رقمی را وارد کنید" required maxlength="4">
+            <div class="input-group">
+                <i class="fas fa-key input-icon"></i>
+                <input type="text" id="verifyCode" placeholder="کد ۴ رقمی را وارد کنید" required maxlength="4">
+            </div>
             <button type="submit">تایید کد</button>
         </form>
+        <div class="timer">زمان باقیمانده: <span id="countdown">۵:۰۰</span></div>
         <button id="resendCode">ارسال مجدد کد</button>
     </div>
+    
     <div id="message"></div>
 </div>
+
 <script>
     // تنظیمات SMS
     const SMS_API_KEY = 'OWZmMGNmMmQtYzc4Zi00NDRhLWFmNWEtYTY4Zjk3ZjZlNmM5MGNhY2M4OTQwNmRmNjA1MWEwY2NjYzNhMDhlNzIwNGQ=';
@@ -145,7 +411,10 @@
     const SMS_SENDER = '+983000505';
     const SMS_URL = 'https://api2.ippanel.com/api/v1/sms/pattern/normal/send';
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFZW5XRjXzQC-10AWpMvGKuOY-7lZnxqQP8pX0fqW0WKrfeCEQEmJQX2a8fm8Q0ok/exec';
+    
     let currentData = {}; // {name, phone, code, timestamp}
+    let countdownInterval;
+    
     // تابع ارسال SMS
     async function sendSMS(phone, variables, message = 'کد تایید') {
         const payload = {
@@ -168,36 +437,63 @@
             throw new Error(message + ' خطا: ' + error.message);
         }
     }
+    
+    // شروع تایمر
+    function startCountdown() {
+        let timeLeft = 300; // 5 minutes in seconds
+        clearInterval(countdownInterval);
+        
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('countdown').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown').textContent = 'منقضی شده';
+                document.getElementById('countdown').style.color = 'var(--danger)';
+            }
+        }, 1000);
+    }
+    
     // قدم ۱: ارسال کد تایید
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerNumber').value.trim();
+        
         if (!name || !phone) return showMessage('نام و شماره رو وارد کن!', 'error');
+        
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         currentData = { name, phone, code, timestamp: Date.now() };
+        
         try {
             await sendSMS(phone, { verification_code: code }, 'کد تایید');
             showMessage('کد به شماره شما ارسال شد!', 'success');
             document.getElementById('phoneDisplay').textContent = phone;
             switchStep('step1', 'step2');
             document.getElementById('verifyCode').focus();
+            startCountdown();
         } catch (error) {
             showMessage(error.message, 'error');
         }
     });
+    
     // قدم ۲: تایید کد
     document.getElementById('verifyForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const code = document.getElementById('verifyCode').value.trim();
         if (!code) return;
+        
         if (currentData.code !== code || (Date.now() - currentData.timestamp > 300000)) {
             showMessage('کد نامعتبر یا منقضی شده!', 'error');
             return;
         }
+        
         try {
             // ذخیره در Sheets
-            console.log('ارسال به Sheets:', { name: currentData.name, number: currentData.phone }); // دیباگ
+            console.log('ارسال به Sheets:', { name: currentData.name, number: currentData.phone });
             const sheetResponse = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 
@@ -206,18 +502,23 @@
                 body: JSON.stringify({ name: currentData.name, number: currentData.phone }),
                 redirect: 'follow'
             });
-            console.log('پاسخ Sheets:', sheetResponse.status, await sheetResponse.text()); // دیباگ
+            
+            console.log('پاسخ Sheets:', sheetResponse.status, await sheetResponse.text());
             if (!sheetResponse.ok) throw new Error('خطا در ذخیره اطلاعات');
+            
             // SMS موفقیت
             await sendSMS(currentData.phone, { verification_code: 'تبریک! با موفقیت ثبت شدید.' }, 'پیام تبریک');
+            
             // نمایش پیام تبریک
             showCongrats(currentData.name);
+            clearInterval(countdownInterval);
             currentData = {};
         } catch (error) {
-            console.error('خطا در ذخیره:', error); // دیباگ
+            console.error('خطا در ذخیره:', error);
             showMessage('خطا: ' + error.message, 'error');
         }
     });
+    
     // ارسال مجدد
     document.getElementById('resendCode').addEventListener('click', () => {
         const name = document.getElementById('customerName').value.trim();
@@ -227,39 +528,52 @@
             switchStep('step2', 'step1');
         }
     });
+    
     // نمایش تبریک و رفرش
     function showCongrats(name) {
         const congratsDiv = document.createElement('div');
         congratsDiv.className = 'congrats';
         congratsDiv.innerHTML = `
-            <h2>تبریک!</h2>
-            <p>شمارتون ثبت شد.</p>
+            <i class="fas fa-check-circle"></i>
+            <h2>تبریک ${name}!</h2>
+            <p>شماره شما با موفقیت ثبت شد.</p>
         `;
         document.body.appendChild(congratsDiv);
-        console.log('شروع تایمر رفرش...'); // دیباگ برای چک کردن
-        // رفرش بعد از ۳ ثانیه
+        
         setTimeout(() => {
-            console.log('حذف div و رفرش...'); // دیباگ برای چک کردن
             document.body.removeChild(congratsDiv);
             location.reload();
         }, 3000);
     }
+    
     function switchStep(hide, show) {
         document.getElementById(hide).classList.remove('active');
         document.getElementById(show).classList.add('active');
+        
+        // Update step indicator
+        document.getElementById('step1Dot').classList.toggle('active', show === 'step1');
+        document.getElementById('step2Dot').classList.toggle('active', show === 'step2');
     }
+    
     function showMessage(text, type) {
         const msg = document.getElementById('message');
-        msg.textContent = text;
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        
+        msg.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
         msg.className = type;
-        setTimeout(() => { msg.textContent = ''; msg.className = ''; }, 5000);
+        
+        setTimeout(() => { 
+            msg.textContent = ''; 
+            msg.className = ''; 
+        }, 5000);
     }
+    
     // لود لیست (console.log برای دیباگ)
     async function loadCustomers() {
         try {
-            console.log('درخواست GET به Sheets...'); // دیباگ
+            console.log('درخواست GET به Sheets...');
             const response = await fetch(APPS_SCRIPT_URL);
-            console.log('پاسخ GET:', response.status); // دیباگ
+            console.log('پاسخ GET:', response.status);
             if (!response.ok) throw new Error('خطا در لود');
             const data = await response.json();
             console.log('مشتریان:', data.slice(1));
@@ -267,6 +581,7 @@
             console.error('خطا در لود لیست:', error);
         }
     }
+    
     loadCustomers();
 </script>
 </body>
