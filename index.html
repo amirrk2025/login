@@ -236,8 +236,10 @@
             <p>شمارتون ثبت شد.</p>
         `;
         document.body.appendChild(congratsDiv);
+        console.log('شروع تایمر رفرش...'); // دیباگ برای چک کردن
         // رفرش بعد از ۳ ثانیه
         setTimeout(() => {
+            console.log('حذف div و رفرش...'); // دیباگ برای چک کردن
             document.body.removeChild(congratsDiv);
             location.reload();
         }, 3000);
