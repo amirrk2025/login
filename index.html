@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لاگین مشتریان با Google Sheets</title>
+    <style>
+        body { font-family: 'Tahoma', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #218838; }
+        #message { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 5px; border-bottom: 1px solid #eee; }
+        h2 { margin-top: 30px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ورود مشتری</h1>
+    <form id="loginForm">
+        <input type="tel" id="customerNumber" placeholder="شماره مشتری (مثل ۰۹۱۲۳۴۵۶۷۸۹)" required>
+        <button type="submit">ورود و ذخیره</button>
+    </form>
+    <div id="message"></div>
+    <h2>لیست مشتریان ذخیره‌شده:</h2>
+    <ul id="customerList"></ul>
+</div>
+
+<script>
+    // لینک Apps Script Web App رو جایگزین کن
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1jcBDDNW-sm6oIp7shy-pGCjyT1y_WJNUaF3dKf6P5uH1m3mD_wJmhIFtPjdLzxQO/exec'; // مثلاً https://script.google.com/macros/s/AKfycbz.../exec
+
+    const loginForm = document.getElementById('loginForm');
+    const message = document.getElementById('message');
+    const customerList = document.getElementById('customerList');
+
+    async function addToSheet(number) {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number: number })
+        });
+        if (!response.ok) throw new Error('خطا در ذخیره: ' + response.status);
+        return true;
+    }
+
+    async function loadFromSheet() {
+        const response = await fetch(APPS_SCRIPT_URL);
+        if (!response.ok) throw new Error('خطا در لود: ' + response.status);
+        const data = await response.json();
+        return data.slice(1); // رد کردن هدر
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const number = document.getElementById('customerNumber').value;
+        if (!number) {
+            showMessage('شماره رو وارد کن!', 'error');
+            return;
+        }
+        try {
+            await addToSheet(number);
+            showMessage('شماره با موفقیت ذخیره شد!', 'success');
+            loadCustomers();
+            loginForm.reset();
+        } catch (error) {
+            showMessage('خطا: ' + error.message, 'error');
+        }
+    });
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = type;
+    }
+
+    async function loadCustomers() {
+        try {
+            customerList.innerHTML = '';
+            const customers = await loadFromSheet();
+            customers.forEach(row => {
+                const li = document.createElement('li');
+                li.textContent = row[1] || ''; // شماره در ستون B
+                customerList.appendChild(li);
+            });
+        } catch (error) {
+            showMessage('خطا در لود لیست: ' + error.message, 'error');
+        }
+    }
+
+    loadCustomers();
+</script>
+</body>
+</html>
