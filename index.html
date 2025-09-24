@@ -113,6 +113,7 @@
         @keyframes bounceIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 100% { transform: translate(-50%, -50%) scale(1); } }
         .congrats h2 { margin: 0 0 10px; font-size: 20px; }
         .congrats p { margin: 0; font-size: 14px; }
+        .debug { position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 999; display: none; }
     </style>
 </head>
 <body>
@@ -140,6 +141,9 @@
 
     <div id="message"></div>
 </div>
+
+<!-- دیباگ div -->
+<div id="debug" class="debug"></div>
 
 <script>
     // تنظیمات SMS
@@ -210,21 +214,36 @@
         }
 
         try {
+            // دیباگ: چک payload
+            console.log('Payload to Sheets:', { name: currentData.name, number: currentData.phone });
+
             // ذخیره در Sheets
             const sheetResponse = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ name: currentData.name, number: currentData.phone })
             });
-            if (!sheetResponse.ok) throw new Error('خطا در ذخیره اطلاعات');
+
+            console.log('Sheets response status:', sheetResponse.status);
+            if (!sheetResponse.ok) {
+                const errorText = await sheetResponse.text();
+                console.error('Sheets error:', errorText);
+                throw new Error('خطا در ذخیره اطلاعات: ' + sheetResponse.status);
+            }
+
+            const result = await sheetResponse.json();
+            console.log('Sheets result:', result);
 
             // SMS موفقیت
             await sendSMS(currentData.phone, { verification_code: 'تبریک! با موفقیت ثبت شدید.' }, 'پیام تبریک');
 
-            // نمایش پیام تبریک
+            // نمایش تبریک
             showCongrats(currentData.name);
+
+            // پاک کردن داده
             currentData = {};
         } catch (error) {
+            console.error('Error in verify:', error);
             showMessage('خطا: ' + error.message, 'error');
         }
     });
@@ -241,6 +260,9 @@
 
     // نمایش تبریک و رفرش
     function showCongrats(name) {
+        // دیباگ
+        console.log('Showing congrats for:', name);
+
         const congratsDiv = document.createElement('div');
         congratsDiv.className = 'congrats';
         congratsDiv.innerHTML = `
@@ -251,6 +273,7 @@
 
         // رفرش بعد از ۳ ثانیه
         setTimeout(() => {
+            console.log('Refreshing page...');
             document.body.removeChild(congratsDiv);
             location.reload();
         }, 3000);
@@ -268,7 +291,7 @@
         setTimeout(() => { msg.textContent = ''; msg.className = ''; }, 5000);
     }
 
-    // لود لیست (console.log برای دیباگ)
+    // لود لیست
     async function loadCustomers() {
         try {
             const response = await fetch(APPS_SCRIPT_URL);
