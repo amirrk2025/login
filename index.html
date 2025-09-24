@@ -25,13 +25,13 @@
             --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             --transition: all 0.3s ease;
         }
-        
-        * { 
+       
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+       
         body {
             font-family: 'Vazirmatn', Tahoma, sans-serif;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -44,7 +44,7 @@
             line-height: 1.6;
             color: var(--dark);
         }
-        
+       
         .container {
             max-width: 450px;
             width: 100%;
@@ -56,7 +56,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+       
         .container::before {
             content: '';
             position: absolute;
@@ -66,18 +66,18 @@
             height: 5px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
-        
-        @keyframes slideIn { 
-            from { 
-                opacity: 0; 
-                transform: translateY(20px) scale(0.98); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            } 
+       
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
-        
+       
         h1 {
             text-align: center;
             color: var(--dark);
@@ -87,7 +87,7 @@
             position: relative;
             padding-bottom: 15px;
         }
-        
+       
         h1::after {
             content: '';
             position: absolute;
@@ -99,12 +99,12 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 3px;
         }
-        
+       
         .input-group {
             position: relative;
             margin-bottom: 20px;
         }
-        
+       
         input {
             width: 100%;
             padding: 16px 20px 16px 50px;
@@ -114,14 +114,14 @@
             transition: var(--transition);
             background-color: #fafbfc;
         }
-        
+       
         input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
             background-color: white;
         }
-        
+       
         .input-icon {
             position: absolute;
             left: 18px;
@@ -130,7 +130,7 @@
             color: var(--gray);
             font-size: 18px;
         }
-        
+       
         button {
             width: 100%;
             padding: 16px;
@@ -147,7 +147,7 @@
             overflow: hidden;
             z-index: 1;
         }
-        
+       
         button::before {
             content: '';
             position: absolute;
@@ -159,41 +159,41 @@
             transition: var(--transition);
             z-index: -1;
         }
-        
+       
         button:hover::before {
             width: 100%;
         }
-        
+       
         button:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 12px 20px rgba(40, 167, 69, 0.25);
         }
-        
-        button:disabled { 
-            background: #ccc; 
-            cursor: not-allowed; 
-            transform: none; 
+       
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
-        
+       
         button:disabled::before {
             display: none;
         }
-        
+       
         #resendCode {
             background: linear-gradient(135deg, var(--info), var(--info-dark));
             font-size: 14px;
             padding: 14px;
             margin-top: 5px;
         }
-        
+       
         #resendCode::before {
             background: linear-gradient(135deg, var(--info-dark), var(--info));
         }
-        
-        #resendCode:hover { 
-            box-shadow: 0 12px 20px rgba(0, 123, 255, 0.25); 
+       
+        #resendCode:hover {
+            box-shadow: 0 12px 20px rgba(0, 123, 255, 0.25);
         }
-        
+       
         #message {
             margin: 20px 0;
             padding: 14px;
@@ -206,54 +206,54 @@
             justify-content: center;
             gap: 10px;
         }
-        
-        @keyframes fadeIn { 
-            from { 
-                opacity: 0; 
+       
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
                 transform: translateY(-10px);
-            } 
-            to { 
-                opacity: 1; 
+            }
+            to {
+                opacity: 1;
                 transform: translateY(0);
-            } 
+            }
         }
-        
+       
         .success {
             background: linear-gradient(135deg, #e8f7ee, #d4f3e3);
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        
+       
         .error {
             background: linear-gradient(135deg, #fde8e8, #f9d6d6);
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        
-        .step { 
-            display: none; 
+       
+        .step {
+            display: none;
         }
-        
-        .step.active { 
-            display: block; 
-            animation: slideIn 0.4s ease-out; 
+       
+        .step.active {
+            display: block;
+            animation: slideIn 0.4s ease-out;
         }
-        
-        p { 
-            text-align: center; 
-            color: var(--gray); 
-            margin: 15px 0; 
-            font-size: 15px; 
+       
+        p {
+            text-align: center;
+            color: var(--gray);
+            margin: 15px 0;
+            font-size: 15px;
             line-height: 1.7;
         }
-        
-        #phoneDisplay { 
-            font-weight: bold; 
-            color: var(--info); 
+       
+        #phoneDisplay {
+            font-weight: bold;
+            color: var(--info);
             direction: ltr;
             display: inline-block;
         }
-        
+       
         .congrats {
             position: fixed;
             top: 50%;
@@ -270,47 +270,47 @@
             max-width: 320px;
             width: 90%;
         }
-        
-        @keyframes bounceIn { 
-            0% { 
-                opacity: 0; 
-                transform: translate(-50%, -50%) scale(0.3); 
-            } 
-            50% { 
-                opacity: 1; 
-                transform: translate(-50%, -50%) scale(1.05); 
-            } 
-            100% { 
-                transform: translate(-50%, -50%) scale(1); 
-            } 
+       
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
-        
-        .congrats h2 { 
-            margin: 0 0 15px; 
-            font-size: 24px; 
+       
+        .congrats h2 {
+            margin: 0 0 15px;
+            font-size: 24px;
             font-weight: 700;
         }
-        
-        .congrats p { 
-            margin: 0; 
-            font-size: 16px; 
+       
+        .congrats p {
+            margin: 0;
+            font-size: 16px;
             color: white;
             opacity: 0.9;
         }
-        
+       
         .congrats i {
             font-size: 50px;
             margin-bottom: 15px;
             display: block;
             color: rgba(255, 255, 255, 0.9);
         }
-        
+       
         .step-indicator {
             display: flex;
             justify-content: center;
             margin-bottom: 25px;
         }
-        
+       
         .step-dot {
             width: 10px;
             height: 10px;
@@ -319,12 +319,12 @@
             margin: 0 6px;
             transition: var(--transition);
         }
-        
+       
         .step-dot.active {
             background-color: var(--primary);
             transform: scale(1.2);
         }
-        
+       
         .step-title {
             text-align: center;
             font-size: 18px;
@@ -332,28 +332,28 @@
             margin-bottom: 25px;
             color: var(--dark);
         }
-        
+       
         .timer {
             text-align: center;
             margin: 10px 0;
             font-size: 14px;
             color: var(--gray);
         }
-        
+       
         .timer span {
             font-weight: 600;
             color: var(--info);
         }
-        
+       
         @media (max-width: 480px) {
             .container {
                 padding: 30px 25px;
             }
-            
+           
             h1 {
                 font-size: 22px;
             }
-            
+           
             input {
                 padding: 14px 20px 14px 45px;
             }
@@ -363,13 +363,13 @@
 <body>
 <div class="container">
     <h1>ورود مشتری</h1>
-    
+   
     <!-- Step Indicator -->
     <div class="step-indicator">
         <div class="step-dot active" id="step1Dot"></div>
         <div class="step-dot" id="step2Dot"></div>
     </div>
-   
+  
     <!-- Step 1: Enter name and phone -->
     <div id="step1" class="step active">
         <div class="step-title">اطلاعات مشتری</div>
@@ -385,7 +385,7 @@
             <button type="submit">ارسال کد تایید</button>
         </form>
     </div>
-    
+   
     <!-- Step 2: Enter verification code -->
     <div id="step2" class="step">
         <div class="step-title">تایید شماره</div>
@@ -400,10 +400,9 @@
         <div class="timer">زمان باقیمانده: <span id="countdown">۵:۰۰</span></div>
         <button id="resendCode">ارسال مجدد کد</button>
     </div>
-    
+   
     <div id="message"></div>
 </div>
-
 <script>
     // تنظیمات SMS
     const SMS_API_KEY = 'OWZmMGNmMmQtYzc4Zi00NDRhLWFmNWEtYTY4Zjk3ZjZlNmM5MGNhY2M4OTQwNmRmNjA1MWEwY2NjYzNhMDhlNzIwNGQ=';
@@ -411,44 +410,52 @@
     const SMS_SENDER = '+983000505';
     const SMS_URL = 'https://api2.ippanel.com/api/v1/sms/pattern/normal/send';
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFZW5XRjXzQC-10AWpMvGKuOY-7lZnxqQP8pX0fqW0WKrfeCEQEmJQX2a8fm8Q0ok/exec';
-    
+   
     let currentData = {}; // {name, phone, code, timestamp}
     let countdownInterval;
-    
+   
     // تابع ارسال SMS
     async function sendSMS(phone, variables, message = 'کد تایید') {
+        // فرمت شماره برای API ippanel (تبدیل 09... به 98...)
+        let formattedPhone = phone.replace(/^0/, '98');
+        console.log('شماره فرمت‌شده:', formattedPhone); // دیباگ
         const payload = {
             code: SMS_PATTERN_CODE,
             sender: SMS_SENDER,
-            recipient: phone,
+            recipient: formattedPhone,
             variable: variables
         };
+        console.log('Payload SMS:', payload); // دیباگ
         try {
             const response = await fetch(SMS_URL, {
                 method: 'POST',
                 headers: { 'apikey': SMS_API_KEY, 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            console.log('پاسخ SMS API:', response.status, response.statusText); // دیباگ
+            const responseText = await response.text();
+            console.log('بدنه پاسخ SMS:', responseText); // دیباگ
             if (response.status !== 200) {
-                throw new Error(message + ' ارسال نشد: ' + response.status);
+                throw new Error(message + ' ارسال نشد: ' + response.status + ' - ' + responseText);
             }
             return true;
         } catch (error) {
+            console.error('خطای SMS:', error); // دیباگ
             throw new Error(message + ' خطا: ' + error.message);
         }
     }
-    
+   
     // شروع تایمر
     function startCountdown() {
         let timeLeft = 300; // 5 minutes in seconds
         clearInterval(countdownInterval);
-        
+       
         countdownInterval = setInterval(() => {
             timeLeft--;
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             document.getElementById('countdown').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
+           
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
                 document.getElementById('countdown').textContent = 'منقضی شده';
@@ -456,18 +463,18 @@
             }
         }, 1000);
     }
-    
+   
     // قدم ۱: ارسال کد تایید
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerNumber').value.trim();
-        
+       
         if (!name || !phone) return showMessage('نام و شماره رو وارد کن!', 'error');
-        
+       
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         currentData = { name, phone, code, timestamp: Date.now() };
-        
+       
         try {
             await sendSMS(phone, { verification_code: code }, 'کد تایید');
             showMessage('کد به شماره شما ارسال شد!', 'success');
@@ -479,36 +486,36 @@
             showMessage(error.message, 'error');
         }
     });
-    
+   
     // قدم ۲: تایید کد
     document.getElementById('verifyForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const code = document.getElementById('verifyCode').value.trim();
         if (!code) return;
-        
+       
         if (currentData.code !== code || (Date.now() - currentData.timestamp > 300000)) {
             showMessage('کد نامعتبر یا منقضی شده!', 'error');
             return;
         }
-        
+       
         try {
             // ذخیره در Sheets
             console.log('ارسال به Sheets:', { name: currentData.name, number: currentData.phone });
             const sheetResponse = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'text/plain;charset=utf-8'
                 },
                 body: JSON.stringify({ name: currentData.name, number: currentData.phone }),
                 redirect: 'follow'
             });
-            
+           
             console.log('پاسخ Sheets:', sheetResponse.status, await sheetResponse.text());
             if (!sheetResponse.ok) throw new Error('خطا در ذخیره اطلاعات');
-            
+           
             // SMS موفقیت
             await sendSMS(currentData.phone, { verification_code: 'تبریک! با موفقیت ثبت شدید.' }, 'پیام تبریک');
-            
+           
             // نمایش پیام تبریک
             showCongrats(currentData.name);
             clearInterval(countdownInterval);
@@ -518,7 +525,7 @@
             showMessage('خطا: ' + error.message, 'error');
         }
     });
-    
+   
     // ارسال مجدد
     document.getElementById('resendCode').addEventListener('click', () => {
         const name = document.getElementById('customerName').value.trim();
@@ -528,7 +535,7 @@
             switchStep('step2', 'step1');
         }
     });
-    
+   
     // نمایش تبریک و رفرش
     function showCongrats(name) {
         const congratsDiv = document.createElement('div');
@@ -539,35 +546,35 @@
             <p>شماره شما با موفقیت ثبت شد.</p>
         `;
         document.body.appendChild(congratsDiv);
-        
+       
         setTimeout(() => {
             document.body.removeChild(congratsDiv);
             location.reload();
         }, 3000);
     }
-    
+   
     function switchStep(hide, show) {
         document.getElementById(hide).classList.remove('active');
         document.getElementById(show).classList.add('active');
-        
+       
         // Update step indicator
         document.getElementById('step1Dot').classList.toggle('active', show === 'step1');
         document.getElementById('step2Dot').classList.toggle('active', show === 'step2');
     }
-    
+   
     function showMessage(text, type) {
         const msg = document.getElementById('message');
         const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-        
+       
         msg.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
         msg.className = type;
-        
-        setTimeout(() => { 
-            msg.textContent = ''; 
-            msg.className = ''; 
+       
+        setTimeout(() => {
+            msg.textContent = '';
+            msg.className = '';
         }, 5000);
     }
-    
+   
     // لود لیست (console.log برای دیباگ)
     async function loadCustomers() {
         try {
@@ -581,7 +588,7 @@
             console.error('خطا در لود لیست:', error);
         }
     }
-    
+   
     loadCustomers();
 </script>
 </body>
