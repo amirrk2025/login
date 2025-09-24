@@ -22,6 +22,7 @@
 <div class="container">
     <h1>ورود مشتری</h1>
     <form id="loginForm">
+        <input type="text" id="customerName" placeholder="نام مشتری" required>
         <input type="tel" id="customerNumber" placeholder="شماره مشتری (مثل ۰۹۱۲۳۴۵۶۷۸۹)" required>
         <button type="submit">ورود و ذخیره</button>
     </form>
@@ -32,17 +33,17 @@
 
 <script>
     // لینک Apps Script Web App رو جایگزین کن (جدید از deploy)
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvKM3N10Wok7cxKjviAufvDPTkKW4Q4qyENeHX1UN5afybqQY6YaDykZUcN63jbuM7/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfollmuSuuOPoySELHRD2uxVxot3tbEBhzrs8zzkpPg_TnOW9KhB6amEqbHWyyP8ta/exec';
 
     const loginForm = document.getElementById('loginForm');
     const message = document.getElementById('message');
     const customerList = document.getElementById('customerList');
 
-    async function addToSheet(number) {
+    async function addToSheet(name, number) {
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ number: number })
+            body: JSON.stringify({ name: name, number: number })
         });
         if (!response.ok) throw new Error('خطا در ذخیره: ' + response.status);
         const result = await response.json();
@@ -59,14 +60,15 @@
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const name = document.getElementById('customerName').value;
         const number = document.getElementById('customerNumber').value;
-        if (!number) {
-            showMessage('شماره رو وارد کن!', 'error');
+        if (!name || !number) {
+            showMessage('نام و شماره رو وارد کن!', 'error');
             return;
         }
         try {
-            await addToSheet(number);
-            showMessage('شماره با موفقیت ذخیره شد!', 'success');
+            await addToSheet(name, number);
+            showMessage('اطلاعات با موفقیت ذخیره شد!', 'success');
             loadCustomers();
             loginForm.reset();
         } catch (error) {
@@ -85,7 +87,7 @@
             const customers = await loadFromSheet();
             customers.forEach(row => {
                 const li = document.createElement('li');
-                li.textContent = row[1] || ''; // شماره در ستون B
+                li.textContent = `نام: ${row[1] || ''} | شماره: ${row[2] || ''}`; // ستون B: نام، C: شماره
                 customerList.appendChild(li);
             });
         } catch (error) {
